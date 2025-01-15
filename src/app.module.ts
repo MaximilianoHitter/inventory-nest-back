@@ -4,10 +4,14 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { CryptModule } from './crypt/crypt.module';
+import { ModelsModule } from './models/models.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     UsersModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -21,6 +25,7 @@ import { CryptModule } from './crypt/crypt.module';
     }),
     AuthModule,
     CryptModule,
+    ModelsModule,
   ],
   controllers: [],
   providers: []
