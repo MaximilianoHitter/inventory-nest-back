@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
+    constructor(private readonly authService: AuthService) { }
+
     @Post('login')
     async login(@Body() loginDto: AuthDto) {
         return loginDto;
@@ -11,13 +13,11 @@ export class AuthController {
 
     @Post('pepe')
     async pepe(@Body() asd: any) {
-        const authService = new AuthService();
-        return authService.encrypt(asd.pepe);
+        return this.authService.encrypt(asd.pepe);
     }
 
     @Post('epep')
     async epep(@Body() asd: any) {
-        const authService = new AuthService();
-        return authService.decrypt(asd.pepe);
+        return this.authService.decrypt(asd.pepe);
     }
 }

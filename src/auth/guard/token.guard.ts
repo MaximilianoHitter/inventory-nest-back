@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Request } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { CryptService } from "src/crypt/crypt.service";
 import { Token } from "src/models/Token.class";
 
@@ -10,26 +10,22 @@ export default class TokenGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean {
         const request = context.switchToHttp().getRequest();
         const token = request.headers['authorization'];
-        console.log(token)
         if (token == null) {
             throw new HttpException('Token inválido', HttpStatus.UNAUTHORIZED)
         }
-        const tokenDecrypted = this.cryptService.decrypt(token);
-        const tokenParts = tokenDecrypted.split('.');
-        const tokenObject: Token = {
-            header: JSON.parse(tokenParts[0]),
-            payload: JSON.parse(tokenParts[1]),
-            signature: JSON.parse(tokenParts[2])
-        };
-        if (tokenObject.header.app_name != this.configService.get('APP_NAME')) {
+        const tokenBearerLess = token.replace('Bearer ', '');
+        const tokenDecrypted = JSON.parse(this.cryptService.decrypt(tokenBearerLess));
+        //@ts-ignore
+        if (tokenDecrypted.header.app_name != this.configService.get('APP_NAME')) {
             throw new HttpException('Token inválido', HttpStatus.UNAUTHORIZED)
         } else {
-            if (tokenObject.signature.secret != this.configService.get('SECRET_TOKEN')) {
+            //@ts-ignore
+            if (tokenDecrypted.signature.secret != this.configService.get('SECRET_CRYPT')) {
                 throw new HttpException('Token inválido', HttpStatus.UNAUTHORIZED)
             } else {
                 //validar el expires in
-
-                request.user = tokenObject.payload.user_id;
+                //@ts-ignore
+                request.user_id = tokenDecrypted.payload.user_id;
                 return true;
             }
         }
