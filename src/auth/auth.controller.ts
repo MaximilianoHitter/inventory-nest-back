@@ -8,7 +8,13 @@ export class AuthController {
 
     @Post('login')
     async login(@Body() loginDto: AuthDto) {
-        return loginDto;
+        /* return loginDto; */
+        const user_id = 20;
+        const token = this.authService.getToken(user_id);
+        return {
+            token: token,
+            user_id: user_id
+        };
     }
 
     @Post('pepe')

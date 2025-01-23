@@ -23,6 +23,8 @@ export class UsersController {
     @Get('me')
     @UseGuards(TokenGuard)
     async me(@Request() req) {
-        return req.user_id;
+        return {
+            user_id: req.user_id
+        };
     }
 }
