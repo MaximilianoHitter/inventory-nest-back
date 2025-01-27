@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { CryptModule } from './crypt/crypt.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -13,8 +14,13 @@ import { CacheModule } from '@nestjs/cache-manager';
       envFilePath: '.env',
     }),
     CacheModule.register({
-      isGlobal: true, // Hace que el caché esté disponible en toda la app
-      ttl: 60 * 60, // Tiempo de vida en segundos (5 minutos por defecto)
+      store: redisStore,
+      host: 'localhost', // Dirección de tu servidor Redis
+      port: 6379,        // Puerto de tu servidor Redis
+      ttl: 3600 * 1000,         // Tiempo de vida por defecto (en segundos)
+      isGlobal: true,
+      db: 0,
+      keyPrefix: 'inventory-nest'
     }),
     UsersModule,
     TypeOrmModule.forRoot({

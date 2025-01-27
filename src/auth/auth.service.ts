@@ -23,7 +23,7 @@ export class AuthService {
             },
             payload: {
                 user_id: user_id,
-                expires_in: Date.now() + 3600
+                expires_in: Date.now()
             },
             signature: {
                 secret: this.configService.get('SECRET_CRYPT')

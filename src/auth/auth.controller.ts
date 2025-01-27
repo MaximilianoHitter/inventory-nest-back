@@ -15,7 +15,8 @@ export class AuthController {
         /* return loginDto; */
         const user_id = 20;
         const token = this.authService.getToken(user_id);
-        await this.cache.set(`${user_id}`, token, 60 * 60);
+        const nombreCached: string = `user-${user_id}`;
+        await this.cache.set(nombreCached, token, 3600 * 1000);
         return {
             token: token,
             user_id: user_id
