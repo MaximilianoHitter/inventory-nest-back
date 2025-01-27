@@ -4,12 +4,17 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { CryptModule } from './crypt/crypt.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+    }),
+    CacheModule.register({
+      isGlobal: true, // Hace que el caché esté disponible en toda la app
+      ttl: 60 * 60, // Tiempo de vida en segundos (5 minutos por defecto)
     }),
     UsersModule,
     TypeOrmModule.forRoot({

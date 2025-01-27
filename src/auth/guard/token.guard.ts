@@ -1,13 +1,18 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Request } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Inject, Injectable, Request } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CryptService } from "src/crypt/crypt.service";
 import { Token } from "src/models/Token.class";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export default class TokenGuard implements CanActivate {
-    constructor(private readonly configService: ConfigService, private readonly cryptService: CryptService) { }
+    constructor(
+        private readonly configService: ConfigService,
+        private readonly cryptService: CryptService,
+        @Inject('CACHE_MANAGER') private readonly cache: Cache,
+    ) { }
 
-    canActivate(context: ExecutionContext): boolean {
+    async canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest();
         const token = request.headers['authorization'];
         if (token == null) {
@@ -24,7 +29,17 @@ export default class TokenGuard implements CanActivate {
                 throw new HttpException('Token inválido', HttpStatus.UNAUTHORIZED)
             } else {
                 //validar el expires in
+
+
+                //validar si el token está en cache
+                const tokenCached = await this.cache.get(`${tokenDecrypted.payload.user_id}`);
+                throw new HttpException(tokenCached, HttpStatus.UNAUTHORIZED)
+                if (tokenCached == null) {
+                    //@ts-ignore
+                    throw new HttpException('Token inválido 4', HttpStatus.UNAUTHORIZED)
+                }
                 //@ts-ignore
+
                 request.user_id = tokenDecrypted.payload.user_id;
                 return true;
             }
