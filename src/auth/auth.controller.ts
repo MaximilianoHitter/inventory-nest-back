@@ -1,7 +1,8 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { Cache } from 'cache-manager';
+import TokenGuard from './guard/token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -21,6 +22,16 @@ export class AuthController {
             token: token,
             user_id: user_id
         };
+    }
+
+    @Get('logout')
+    @UseGuards(TokenGuard)
+    async logout(@Request() req) {
+        await this.cache.del(`user-${req.user_id}`);
+        return {
+            message: 'logged out',
+            status: 200
+        }
     }
 
     @Post('pepe')
