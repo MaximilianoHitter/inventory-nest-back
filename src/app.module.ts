@@ -9,7 +9,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import { DataSource } from 'typeorm';
 import { User } from './users/user.entity';
 import { ProductsModule } from './products/products.module';
-import { ProductController } from './product/product.controller';
+import { ProductsController } from './products/products.controller';
 
 @Module({
   imports: [
@@ -41,7 +41,7 @@ import { ProductController } from './product/product.controller';
     CryptModule,
     ProductsModule,
   ],
-  controllers: [ProductController],
+  controllers: [ProductsController],
   providers: []
 })
 export class AppModule {
