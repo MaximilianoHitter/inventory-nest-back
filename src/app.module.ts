@@ -8,6 +8,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { DataSource } from 'typeorm';
 import { User } from './users/user.entity';
+import { ProductsModule } from './products/products.module';
+import { ProductController } from './product/product.controller';
 
 @Module({
   imports: [
@@ -32,13 +34,14 @@ import { User } from './users/user.entity';
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_DB,
-      entities: [User],
+      autoLoadEntities: true,
       synchronize: true,
     }),
     AuthModule,
     CryptModule,
+    ProductsModule,
   ],
-  controllers: [],
+  controllers: [ProductController],
   providers: []
 })
 export class AppModule {
