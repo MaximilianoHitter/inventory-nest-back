@@ -2,15 +2,15 @@ import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 
 export class ProductCreateDto {
-    @IsNotEmpty()
-    @IsString()
+    @IsNotEmpty({ message: 'El nombre es requerido' })
+    @IsString({ message: 'El nombre debe ser alphanumérico' })
     nombre: string;
 
-    @IsNotEmpty()
-    @IsString()
+    @IsNotEmpty({ message: 'La marca es requerida' })
+    @IsString({ message: 'La marca debe ser alphanumérica' })
     marca: string;
 
-    @IsNotEmpty()
-    @IsNumber()
+    @IsNotEmpty({ message: 'El precio es requerido' })
+    @IsNumber({}, { message: 'El precio debe ser numérico' })
     precio: number;
 }

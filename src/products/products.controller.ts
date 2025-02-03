@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from './product.entity';
 import { ProductCreateDto } from './dto/productCreate.dto';
+import { ExistsGuard } from 'src/guards/model-exist.guard';
 
 @Controller('products')
 export class ProductsController {
@@ -10,27 +11,48 @@ export class ProductsController {
     ) { }
 
     @Get()
-    async findAll(): Promise<Product[]> {
-        return await this.productsService.findAll();
+    async findAll(): Promise<{ data: Product[] }> {
+        return {
+            data: await this.productsService.findAll()
+        };
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: number): Promise<Product> {
-        return await this.productsService.findOne(id);
+    @UseGuards(ExistsGuard(ProductsService))
+    async findOne(@Param('id') id: number): Promise<{ data: Product }> {
+        return {
+            data: await this.productsService.findOne(id)
+        };
     }
 
     @Post()
-    async create(@Body() product: ProductCreateDto): Promise<Product> {
-        return await this.productsService.create(product as Product);
+    async create(@Body() product: ProductCreateDto): Promise<{ data: Product }> {
+        return {
+            data: await this.productsService.create(product as Product)
+        };
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() product: Product): Promise<Product> {
-        return await this.productsService.update(id, product);
+    @UseGuards(ExistsGuard(ProductsService))
+    async update(@Param('id') id: number, @Body() product: Product): Promise<{ data: Product }> {
+        return {
+            data: await this.productsService.update(id, product)
+        };
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: number): Promise<void> {
-        return await this.productsService.delete(id);
+    @UseGuards(ExistsGuard(ProductsService))
+    async delete(@Param('id') id: number): Promise<{ data: string }> {
+        const prod = await this.productsService.findOne(id);
+        if (prod == null || prod == undefined) {
+            return {
+                data: 'Product not found'
+            }
+        }
+        const asd = await this.productsService.delete(id);
+        console.log(asd);
+        return {
+            data: 'Product deleted'
+        }
     }
 }

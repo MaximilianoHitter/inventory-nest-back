@@ -41,7 +41,7 @@ import { ProductsController } from './products/products.controller';
     CryptModule,
     ProductsModule,
   ],
-  controllers: [ProductsController],
+  controllers: [],
   providers: []
 })
 export class AppModule {
