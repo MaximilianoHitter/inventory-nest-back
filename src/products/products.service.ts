@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './product.entity';
 import { Repository } from 'typeorm';
+import { GeneralService } from 'src/models/general.service';
 
 @Injectable()
-export class ProductsService {
+export class ProductsService implements GeneralService {
     constructor(
         @InjectRepository(Product) private productRepository: Repository<Product>,
     ) { }

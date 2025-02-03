@@ -14,4 +14,7 @@ export class UsersService {
         return this.usersRepository.find();
     }
 
+    async create(user: Omit<User, 'id'>): Promise<User> {
+        return await this.usersRepository.save(user);
+    }
 }
