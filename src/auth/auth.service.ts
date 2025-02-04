@@ -5,7 +5,10 @@ import { Token } from 'src/models/Token.class';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly configService: ConfigService, private readonly cryptService: CryptService) { }
+    constructor(
+        private readonly configService: ConfigService,
+        private readonly cryptService: CryptService
+    ) { }
 
 
     encrypt(text: string) {
